@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Room: Atrapados en el Servidor - ISO 27001 UAT</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Cyberpunk Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Share Tech Mono & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0a0d14;
+            --bg-card: #121824;
+            --border-color: #1e293b;
+            --neon-green: #00ff66;
+            --neon-cyan: #00f0ff;
+            --neon-red: #ff0055;
+            --neon-yellow: #ffcc00;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 102, 0.05) 0%, transparent 20%);
+        }
+
+        .font-mono {
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* Glitch Title Effect */
+        .cyber-title {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .neon-green-text {
+            color: var(--neon-green);
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.4);
+        }
+
+        .neon-red-text {
+            color: var(--neon-red);
+            text-shadow: 0 0 8px rgba(255, 0, 85, 0.4);
+        }
+
+        /* Custom Cards */
+        .cyber-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .cyber-card-glow {
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        /* Cyber Buttons */
+        .btn-cyber-primary {
+            background: linear-gradient(135deg, rgba(0,240,255,0.2) 0%, rgba(0,255,102,0.2) 100%);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cyber-primary:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+        }
+
+        .btn-cyber-danger {
+            background: rgba(255, 0, 85, 0.1);
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold;
+        }
+
+        .btn-cyber-danger:hover {
+            background: var(--neon-red);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+        }
+
+        /* Progress Bar */
+        .progress {
+            background-color: #0d131f;
+            border: 1px solid var(--border-color);
+            height: 14px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-cyan {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        /* Email Simulation Styling */
+        .email-item {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .email-item:hover {
+            border-color: var(--neon-cyan);
+            transform: translateY(-2px);
+        }
+
+        .email-item.selected {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 102, 0.05);
+        }
+
+        .flag-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 0, 85, 0.2);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        /* Chat / Vishing Simulation */
+        .chat-bubble {
+            max-width: 85%;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .chat-incoming {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border-bottom-left-radius: 2px;
+            border: 1px solid #334155;
+        }
+
+        .chat-outgoing {
+            background-color: rgba(0, 240, 255, 0.15);
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-bottom-right-radius: 2px;
+            margin-left: auto;
+        }
+
+        /* Password Criteria Indicators */
+        .criterion {
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+        .criterion.valid {
+            color: var(--neon-green);
+        }
+        .criterion.invalid {
+            color: var(--text-muted);
+        }
+
+        /* Audio Wave / Pulse Effect */
+        .pulse-red {
+            animation: pulse-red-anim 1.5s infinite;
+        }
+        @keyframes pulse-red-anim {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 0, 85, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+        }
+
+        /* Lock Screen Terminal Text */
+        .terminal-box {
+            background-color: #05070a;
+            border: 1px solid #1e293b;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--neon-green);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        /* Hide screens dynamically */
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(100px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Navbar / Header status -->
+    <header class="py-3 px-4 border-bottom border-secondary bg-dark bg-opacity-75 sticky-top backdrop-blur">
+        <div class="container-fluid max-w-6xl d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-info fs-4"></i>
+                <span class="cyber-title fs-5 fw-bold">SGSI UAT <span class="text-white fs-6 opacity-75">| ISO/IEC 27001 (Cláusula 6)</span></span>
+            </div>
+
+            <!-- Timer and Global Progress -->
+            <div id="game-stats-header" class="d-none d-flex align-items-center gap-4">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-regular fa-clock neon-red-text fs-5"></i>
+                    <span id="timer-display" class="font-mono fs-4 fw-bold text-danger">15:00</span>
+                </div>
+                <div style="width: 140px;">
+                    <div class="d-flex justify-content-between font-mono fs-7 mb-1 text-muted">
+                        <span>PROGRESO</span>
+                        <span id="progress-text">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div id="main-progress-bar" class="progress-bar progress-bar-cyan" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container my-auto py-4 flex-grow-1" style="max-width: 900px;">
+
+        <!-- 0. PANTALLA INICIAL -->
+        <section id="screen-intro" class="screen active text-center">
+            <div class="cyber-card cyber-card-glow p-4 p-md-5">
+                <div class="mb-3">
+                    <span class="badge bg-danger bg-opacity-25 text-danger border border-danger px-3 py-2 font-mono">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i> ALERTA CRÍTICA DE SEGURIDAD
+                    </span>
+                </div>
+                <h1 class="cyber-title display-5 fw-bold mb-3">ATRAPADOS EN EL SERVIDOR</h1>
+                <p class="text-muted fs-5 mb-4">
+                    Un ataque imprevisto de <strong class="text-white">Ransomware "LockUAT"</strong> ha comenzado a infectar la red de la Universidad Autónoma de Tamaulipas. El centro de datos ha entrado en bloqueo preventivo.
+                </p>
+
+                <div class="terminal-box text-start mb-4">
+                    <p class="mb-1 text-warning">> INICIANDO PROTOCOLO DE AISLAMIENTO...</p>
+                    <p class="mb-1 text-danger">> ALERTA: 85% de los archivos administrativos en riesgo de cifrado.</p>
+                    <p class="mb-1 text-info">> REQUISITO DE ESCAPE: Demostrar cumplimiento estricto del Control ISO 27001 - Cláusula 6 (Controles de Personas).</p>
+                    <p class="mb-0 text-success">> TIEMPO LIMITE: 15 Minutos para desbloquear la consola maestra.</p>
+                </div>
+
+                <div class="row g-3 text-start mb-4">
+                    <div class="col-md-4">
+                        <div class="p-3 border border-secondary rounded bg-dark h-100">
+                            <i class="fa-solid fa-user-shield text-info fs-3 mb-2"></i>
+                            <h6 class="text-white font-mono">1. Concienciación</h6>
+                            <p class="small text-muted mb-0">Detecta amenzas de Phishing en la bandeja institucional.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border border-secondary rounded bg-dark h-100">
+                            <i class="fa-solid fa-phone-slash text-warning fs-3 mb-2"></i>
+                            <h6 class="text-white font-mono">2. Ingeniería Social</h6>
+                            <p class="small text-muted mb-0">Neutraliza ataques de Vishing por llamada/mensaje.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border border-secondary rounded bg-dark h-100">
+                            <i class="fa-solid fa-key text-success fs-3 mb-2"></i>
+                            <h6 class="text-white font-mono">3. Credenciales SGSI</h6>
+                            <p class="small text-muted mb-0">Genera la clave de rescate bajo estándares vigentes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btn-start" class="btn btn-cyber-primary btn-lg px-5 py-3 fs-5 w-100 w-md-auto">
+                    <i class="fa-solid fa-terminal me-2"></i>INICIAR PROTOCOLO DE DESBLOQUEO
+                </button>
+            </div>
+        </section>
+
+        <!-- 1. HABITACIÓN 1: EL FILTRO DE LA BANDEJA DE ENTRADA -->
+        <section id="screen-room1" class="screen">
+            <div class="cyber-card p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border-secondary pb-3">
+                    <div>
+                        <span class="text-info font-mono small">HABITACIÓN 1 DE 3</span>
+                        <h3 class="cyber-title mb-0">El Filtro de la Bandeja de Entrada</h3>
+                    </div>
+                    <span class="badge bg-info bg-opacity-10 text-info border border-info font-mono">ISO 27001 - Control 6.3</span>
+                </div>
+
+                <p class="text-muted small mb-4">
+                    <i class="fa-solid fa-circle-info me-1 text-info"></i>
+                    El Ransomware intentó filtrarse mediante correos de ingeniería social. Analiza cuidadosamente la lista de correos institucionales. <strong>Selecciona únicamente el correo que es 100% legítimo y seguro.</strong>
+                </p>
+
+                <!-- List of emails -->
+                <div class="d-flex flex-column gap-3 mb-4" id="email-list">
+                    
+                    <!-- Email 1: Phishing Urgent Request -->
+                    <div class="email-item p-3" onclick="selectEmail(1)">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="fw-bold text-white"><i class="fa-regular fa-envelope me-2 text-danger"></i>Soporte UAT Tec</span>
+                            <span class="small text-muted font-mono">soporte-uat@soporte-uat-mx.com</span>
+                        </div>
+                        <h6 class="text-warning mb-1">¡URGENTE! Cierre de cuenta de correo por actualización de servidor</h6>
+                        <p class="small text-muted mb-2">Estimado usuario, si no confirma sus credenciales en las próximas 2 horas, su acceso institucional al campus virtual será suspendido permanentemente.</p>
+                        <div class="font-mono text-info small"><i class="fa-solid fa-link me-1"></i>http://login-uat-autenticacion.com/renovar</div>
+                    </div>
+
+                    <!-- Email 2: Legitimate Email -->
+                    <div class="email-item p-3" onclick="selectEmail(2)">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="fw-bold text-white"><i class="fa-regular fa-envelope me-2 text-success"></i>Dirección de Tecnologías UAT</span>
+                            <span class="small text-muted font-mono">boletin_dtic@uat.edu.mx</span>
+                        </div>
+                        <h6 class="text-white mb-1">Boletín Mensual: Calendario de Mantenimiento Programado del SGSI</h6>
+                        <p class="small text-muted mb-2">Estimada comunidad universitaria, les informamos el calendario de mantenimiento preventivo para el próximo fin de semana. No se solicitarán datos de usuario ni contraseñas durante este proceso.</p>
+                        <div class="font-mono text-info small"><i class="fa-solid fa-link me-1"></i>https://www.uat.edu.mx/comunicados/ti-2026</div>
+                    </div>
+
+                    <!-- Email 3: Phishing Fake Reward -->
+                    <div class="email-item p-3" onclick="selectEmail(3)">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="fw-bold text-white"><i class="fa-regular fa-envelope me-2 text-danger"></i>Recursos Humanos UAT</span>
+                            <span class="small text-muted font-mono">rh.pagos@uat-nomina.org</span>
+                        </div>
+                        <h6 class="text-warning mb-1">Aumento Salarial y Bono Extraordinario 2026 - Confirmación requerida</h6>
+                        <p class="small text-muted mb-2">Se ha aprobado un ajuste salarial a su favor. Por favor abra el archivo adjunto 'Bono_Abono.exe' e inicie sesión para validar su clabe interbancaria.</p>
+                        <div class="font-mono text-info small"><i class="fa-solid fa-paperclip me-1"></i>Bono_Abono_UAT.exe (Adjunto ejecutable)</div>
+                    </div>
+
+                </div>
+
+                <!-- Feedback area -->
+                <div id="room1-feedback" class="d-none alert mb-4" role="alert"></div>
+
+                <div class="d-flex justify-content-end">
+                    <button id="btn-validate-room1" class="btn btn-cyber-primary py-2 px-4" disabled onclick="validateRoom1()">
+                        VERIFICAR SELECCIÓN <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. HABITACIÓN 2: EL TELÉFONO DESCOMPUESTO (VISHING) -->
+        <section id="screen-room2" class="screen">
+            <div class="cyber-card p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border-secondary pb-3">
+                    <div>
+                        <span class="text-info font-mono small">HABITACIÓN 2 DE 3</span>
+                        <h3 class="cyber-title mb-0">El Teléfono Descompuesto (Vishing / Social Engineering)</h3>
+                    </div>
+                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning font-mono">ISO 27001 - Control 6.2 & 6.3</span>
+                </div>
+
+                <p class="text-muted small mb-3">
+                    Inesperadamente suena tu teléfono institucional. Un número desconocido que se identifica como "Ing. Ramírez de Infraestructura TI UAT" exige tu contraseña inmediata.
+                </p>
+
+                <!-- Phone Simulation Interface -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-5">
+                        <div class="p-3 border border-secondary rounded bg-dark text-center h-100 d-flex flex-column justify-content-center align-items-center">
+                            <div class="rounded-circle bg-danger bg-opacity-25 p-4 mb-3 pulse-red border border-danger">
+                                <i class="fa-solid fa-phone-volume text-danger fs-1"></i>
+                            </div>
+                            <h6 class="text-white font-mono mb-1">LLAMADA EN CURSO</h6>
+                            <p class="small text-muted mb-0 font-mono">+52 (834) 318-0000 EXT: 9941</p>
+                            <span class="badge bg-danger mt-2">SUPESTA UAT TI</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <div class="p-3 border border-secondary rounded bg-dark h-100 d-flex flex-column">
+                            <div class="small font-mono text-muted mb-2 border-bottom border-secondary pb-1">TRANSCRIPCIÓN DE AUDIO:</div>
+                            <div class="chat-bubble chat-incoming mb-auto">
+                                <em>"¡Hola! Habla el Ing. Ramírez del centro de datos UAT. Detectamos un virus severo atacando tu equipo justo ahora. Necesito que me dictes inmediatamente tu usuario y contraseña institucional para aplicar el parche antes de que perdamos tus archivos."</em>
+                            </div>
+                            <div class="text-end small font-mono text-warning mt-2">
+                                <i class="fa-solid fa-triangle-exclamation me-1"></i> ¿Cómo respondes ante este incidente?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Answer options -->
+                <div class="d-flex flex-column gap-2 mb-4">
+                    <div class="form-check cyber-card p-3 m-0" onclick="selectVishingOption(1)">
+                        <input class="form-check-input me-2" type="radio" name="vishingOption" id="vish1" value="1">
+                        <label class="form-check-label text-white cursor-pointer" for="vish1">
+                            <strong>Opción A:</strong> Proporcionar la contraseña ya que dice ser del departamento técnico oficial y tiene prisa por salvar el equipo.
+                        </label>
+                    </div>
+
+                    <div class="form-check cyber-card p-3 m-0" onclick="selectVishingOption(2)">
+                        <input class="form-check-input me-2" type="radio" name="vishingOption" id="vish2" value="2">
+                        <label class="form-check-label text-white cursor-pointer" for="vish2">
+                            <strong>Opción B:</strong> Pedirle que te envíe un mensaje por WhatsApp personal y dictarle una contraseña temporal o antigua para no quedar mal.
+                        </label>
+                    </div>
+
+                    <div class="form-check cyber-card p-3 m-0" onclick="selectVishingOption(3)">
+                        <input class="form-check-input me-2" type="radio" name="vishingOption" id="vish3" value="3">
+                        <label class="form-check-label text-white cursor-pointer" for="vish3">
+                            <strong>Opción C:</strong> Colgar la llamada inmediatamente, jamás divulgar la contraseña y reportar el intento de Vishing al canal oficial de Mesa de Ayuda / Ciberseguridad UAT.
+                        </label>
+                    </div>
+                </div>
+
+                <div id="room2-feedback" class="d-none alert mb-4" role="alert"></div>
+
+                <div class="d-flex justify-content-end">
+                    <button id="btn-validate-room2" class="btn btn-cyber-primary py-2 px-4" disabled onclick="validateRoom2()">
+                        EVALUAR RESPUESTA <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. HABITACIÓN 3: LA CONTRASEÑA MAESTRA -->
+        <section id="screen-room3" class="screen">
+            <div class="cyber-card p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border-secondary pb-3">
+                    <div>
+                        <span class="text-info font-mono small">HABITACIÓN FINAL</span>
+                        <h3 class="cyber-title mb-0">La Contraseña Maestra de Rescate</h3>
+                    </div>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success font-mono">ISO 27001 - Control 6.4 / 9.4</span>
+                </div>
+
+                <p class="text-muted small mb-4">
+                    Para purgar el Ransomware del servidor central de la UAT, debes ingresar una <strong class="text-white">Contraseña Maestra Robusta</strong> que cumpla con los lineamientos del Sistema de Gestión de Seguridad de la Información (SGSI).
+                </p>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label for="pass-input" class="form-label text-white font-mono">INGRESA O CONSTRUYE LA CLAVE DE DESBLOQUEO:</label>
+                        <div class="input-group mb-3">
+                            <input type="text" id="pass-input" class="form-control bg-dark text-white border-secondary font-mono" placeholder="Ej: Uat#2026CiberSegura!" oninput="checkPasswordRequirements()">
+                            <button class="btn btn-outline-secondary text-info" type="button" onclick="generateSuggestedPassword()" title="Generar Sugerencia Valida">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Sugerir
+                            </button>
+                        </div>
+                        <span class="small text-muted font-mono d-block mb-3">
+                            <i class="fa-solid fa-lightbulb text-warning me-1"></i> Sugerencia: Combina palabras, números, símbolos y mayúsculas. Evita palabras comunes directas como "123456" o "uat2026".
+                        </span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 border border-secondary rounded bg-dark">
+                            <h6 class="text-white font-mono mb-2 border-bottom border-secondary pb-1">REQUISITOS DEL SGSI ISO 27001:</h6>
+                            <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                                <li id="req-length" class="criterion invalid"><i class="fa-solid fa-circle-xmark me-2"></i>Mínimo 12 caracteres de longitud</li>
+                                <li id="req-upper" class="criterion invalid"><i class="fa-solid fa-circle-xmark me-2"></i>Al menos una letra MAYÚSCULA</li>
+                                <li id="req-lower" class="criterion invalid"><i class="fa-solid fa-circle-xmark me-2"></i>Al menos una letra minúscula</li>
+                                <li id="req-number" class="criterion invalid"><i class="fa-solid fa-circle-xmark me-2"></i>Al menos un Número (0-9)</li>
+                                <li id="req-symbol" class="criterion invalid"><i class="fa-solid fa-circle-xmark me-2"></i>Al menos un Carácter Especial (@, #, $, !, %, etc.)</li>
+                                <li id="req-word" class="criterion invalid"><i class="fa-solid fa-circle-xmark me-2"></i>Sin palabras comunes inseguras ("123456", "password", "uat2026")</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="room3-feedback" class="d-none alert mb-4" role="alert"></div>
+
+                <div class="d-flex justify-content-end">
+                    <button id="btn-validate-room3" class="btn btn-cyber-primary py-2 px-4" disabled onclick="validateRoom3()">
+                        EJECUTAR PURGA DE RANSOMWARE <i class="fa-solid fa-shield-cat ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. PANTALLA FINAL: ESCAPE COMPLETADO -->
+        <section id="screen-victory" class="screen text-center">
+            <div class="cyber-card cyber-card-glow p-4 p-md-5">
+                <div class="mb-3">
+                    <i class="fa-solid fa-circle-check text-success display-2 neon-green-text"></i>
+                </div>
+                <h1 class="cyber-title display-5 fw-bold mb-2 neon-green-text">¡SISTEMAS RESTAURADOS!</h1>
+                <p class="text-white fs-5 mb-4">Has neutralizado la amenaza de Ransomware y salvado la red institucional de la UAT.</p>
+
+                <!-- Stats summary -->
+                <div class="row justify-content-center g-3 mb-4">
+                    <div class="col-6 col-md-4">
+                        <div class="p-3 border border-secondary rounded bg-dark">
+                            <span class="small text-muted font-mono d-block">TIEMPO EMPLEADO</span>
+                            <span id="stat-time-used" class="fs-4 font-mono fw-bold text-cyan">00:00</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="p-3 border border-secondary rounded bg-dark">
+                            <span class="small text-muted font-mono d-block">NORMATIVA</span>
+                            <span class="fs-4 font-mono fw-bold text-success">ISO 27001</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning summary -->
+                <div class="terminal-box text-start mb-4">
+                    <h6 class="text-info font-mono mb-3"><i class="fa-solid fa-book-bookmark me-2"></i>RESUMEN DE APRENDIZAJES - ISO/IEC 27001 (CLÁUSULA 6):</h6>
+                    <ul class="small text-muted mb-0 ps-3">
+                        <li class="mb-2"><strong class="text-white">Control 6.3 - Concienciación y capacitación en Ciberseguridad:</strong> Identificar señales de correo engañoso (Phishing) como dominios alterados, urgencia artificial y enlaces sospechosos es la primera línea de defensa.</li>
+                        <li class="mb-2"><strong class="text-white">Control 6.2 - Términos y condiciones del empleo:</strong> Ningún personal técnico o directivo solicitará jamás tus contraseñas por teléfono o mensajería (Vishing / Ingeniería Social). La respuesta estándar siempre es colgar y verificar por canales oficiales.</li>
+                        <li class="mb-0"><strong class="text-white">Control 6.4 / 9.4 - Gestión de Credenciales:</strong> Las contraseñas robustas de más de 12 caracteres combinados actúan como escudo contra ataques de fuerza bruta y diccionarios automatizados de Ransomware.</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-cyber-primary btn-lg px-5 py-3 fs-6" onclick="resetGame()">
+                    <i class="fa-solid fa-rotate-right me-2"></i>JUGAR DE NUEVO
+                </button>
+            </div>
+        </section>
+
+        <!-- 5. PANTALLA GAME OVER: TIEMPO AGOTADO -->
+        <section id="screen-gameover" class="screen text-center">
+            <div class="cyber-card p-4 p-md-5 border-danger">
+                <div class="mb-3">
+                    <i class="fa-solid fa-skull-crossbones text-danger display-2 neon-red-text"></i>
+                </div>
+                <h1 class="cyber-title display-5 fw-bold mb-2 neon-red-text">ARCHIVOS CIFRADOS</h1>
+                <p class="text-white fs-5 mb-4">El temporizador llegó a cero antes de purge el sistema. El Ransomware ha bloqueado los servidores de la UAT.</p>
+
+                <div class="terminal-box text-start mb-4 border-danger">
+                    <p class="text-danger mb-1">> ERROR CRÍTICO: TIEMPO AGOTADO.</p>
+                    <p class="text-muted mb-0">> Recuerda: En un incidente real de Ciberseguridad, la velocidad de respuesta y la concienciación previa previenen la propagación de desastres informáticos.</p>
+                </div>
+
+                <button class="btn btn-cyber-danger btn-lg px-5 py-3 fs-6" onclick="resetGame()">
+                    <i class="fa-solid fa-rotate-right me-2"></i>REINTENTAR DESAFÍO
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-3 px-4 border-top border-secondary text-center text-muted small font-mono">
+        Universidad Autónoma de Tamaulipas &copy; 2026 - Actividad Didáctica ISO/IEC 27001 (Cláusula 6 - Controles de Personas)
+    </footer>
+
+    <!-- Vanilla JS Logic -->
+    <script>
+        // Game State Variables
+        let currentScreen = 'screen-intro';
+        let timerSeconds = 15 * 60; // 15 Minutes
+        let timerInterval = null;
+        let selectedEmailId = null;
+        let selectedVishingId = null;
+
+        // Dom Elements
+        const screens = {
+            intro: document.getElementById('screen-intro'),
+            room1: document.getElementById('screen-room1'),
+            room2: document.getElementById('screen-room2'),
+            room3: document.getElementById('screen-room3'),
+            victory: document.getElementById('screen-victory'),
+            gameover: document.getElementById('screen-gameover')
+        };
+
+        const timerDisplay = document.getElementById('timer-display');
+        const progressBar = document.getElementById('main-progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const gameStatsHeader = document.getElementById('game-stats-header');
+
+        // Event Listeners Initialization
+        document.getElementById('btn-start').addEventListener('click', startGame);
+
+        // Screen Navigation Function
+        function showScreen(screenId) {
+            Object.keys(screens).forEach(key => {
+                if(screens[key].id === screenId) {
+                    screens[key].classList.add('active');
+                } else {
+                    screens[key].classList.remove('active');
+                }
+            });
+            currentScreen = screenId;
+        }
+
+        // Timer Functions
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    gameOver();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress(percentage) {
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = `${percentage}%`;
+        }
+
+        // Start Game Workflow
+        function startGame() {
+            gameStatsHeader.classList.remove('d-none');
+            timerSeconds = 15 * 60;
+            updateTimerDisplay();
+            updateProgress(0);
+            startTimer();
+            showScreen('screen-room1');
+        }
+
+        // HABITACIÓN 1 LOGIC (Phishing Email)
+        function selectEmail(id) {
+            selectedEmailId = id;
+            const items = document.querySelectorAll('.email-item');
+            items.forEach((item, idx) => {
+                if (idx === id - 1) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+            document.getElementById('btn-validate-room1').disabled = false;
+        }
+
+        function validateRoom1() {
+            const feedback = document.getElementById('room1-feedback');
+            feedback.classList.remove('d-none', 'alert-success', 'alert-danger');
+
+            if (selectedEmailId === 2) {
+                // Correct Email
+                feedback.classList.add('alert-success');
+                feedback.innerHTML = `
+                    <h6 class="alert-heading fw-bold"><i class="fa-solid fa-circle-check me-2"></i>¡CORRECTO! Correo Seguro Identificado</h6>
+                    <p class="mb-0 small">El correo del boletín institucional utiliza el dominio oficial <code>@uat.edu.mx</code>, no presiona psicológicamente con urgencia infundada ni solicita claves. Los otros dos contenían dominios sospechosos (<code>soporte-uat-mx.com</code> y <code>uat-nomina.org</code>) y archivos ejecutables de Phishing.</p>
+                `;
+                updateProgress(33);
+                setTimeout(() => {
+                    showScreen('screen-room2');
+                }, 2800);
+            } else {
+                // Incorrect Phishing Email
+                feedback.classList.add('alert-danger');
+                feedback.innerHTML = `
+                    <h6 class="alert-heading fw-bold"><i class="fa-solid fa-triangle-exclamation me-2"></i>¡ALERTA DE AMENAZA! Correo Inseguro Detectado</h6>
+                    <p class="mb-0 small">Ese correo contiene banderas rojas claras de Phishing: dominio fraudulento o archivos adjuntos <code>.exe</code> maliciosos. Observa detenidamente el remitente real y la intención del mensaje antes de seleccionar.</p>
+                `;
+            }
+        }
+
+        // HABITACIÓN 2 LOGIC (Vishing / Phone Attack)
+        function selectVishingOption(id) {
+            selectedVishingId = id;
+            document.getElementById('btn-validate-room2').disabled = false;
+        }
+
+        function validateRoom2() {
+            const feedback = document.getElementById('room2-feedback');
+            feedback.classList.remove('d-none', 'alert-success', 'alert-danger');
+
+            if (selectedVishingId === 3) {
+                // Correct Choice
+                feedback.classList.add('alert-success');
+                feedback.innerHTML = `
+                    <h6 class="alert-heading fw-bold"><i class="fa-solid fa-circle-check me-2"></i>¡EXCELENTE PROTOCOLO DE REACCIÓN!</h6>
+                    <p class="mb-0 small">Bajo la normativa ISO 27001 (Control 6.2 y 6.3), el personal jamás debe entregar sus claves por llamada telefónica ni mensaje. La única respuesta válida ante Ingeniería Social es cortar la comunicación e informar por la mesa de ayuda oficial.</p>
+                `;
+                updateProgress(66);
+                setTimeout(() => {
+                    showScreen('screen-room3');
+                }, 2800);
+            } else {
+                // Insecure Choice
+                feedback.classList.add('alert-danger');
+                feedback.innerHTML = `
+                    <h6 class="alert-heading fw-bold"><i class="fa-solid fa-circle-xmark me-2"></i>¡INFRACCIÓN DE SEGURIDAD!</h6>
+                    <p class="mb-0 small">Divulgar contraseñas por teléfono abre las puertas directas del servidor a los atacantes. El departamento técnico de la UAT nunca exigirá credenciales secretas por llamadas entrantes.</p>
+                `;
+            }
+        }
+
+        // HABITACIÓN 3 LOGIC (Password Validation)
+        function checkPasswordRequirements() {
+            const input = document.getElementById('pass-input').value;
+            
+            const reqs = {
+                length: input.length >= 12,
+                upper: /[A-Z]/.test(input),
+                lower: /[a-z]/.test(input),
+                number: /[0-9]/.test(input),
+                symbol: /[^A-Za-z0-9]/.test(input),
+                word: !/(123456|password|uat2026|admin)/i.test(input) && input.length > 0
+            };
+
+            updateCriterion('req-length', reqs.length, 'Mínimo 12 caracteres de longitud');
+            updateCriterion('req-upper', reqs.upper, 'Al menos una letra MAYÚSCULA');
+            updateCriterion('req-lower', reqs.lower, 'Al menos una letra minúscula');
+            updateCriterion('req-number', reqs.number, 'Al menos un Número (0-9)');
+            updateCriterion('req-symbol', reqs.symbol, 'Al menos un Carácter Especial (@, #, $, !, %, etc.)');
+            updateCriterion('req-word', reqs.word, 'Sin palabras comunes inseguras ("123456", "uat2026")');
+
+            const allValid = Object.values(reqs).every(val => val === true);
+            document.getElementById('btn-validate-room3').disabled = !allValid;
+        }
+
+        function updateCriterion(elemId, isValid, text) {
+            const elem = document.getElementById(elemId);
+            if (isValid) {
+                elem.className = 'criterion valid';
+                elem.innerHTML = `<i class="fa-solid fa-circle-check me-2"></i>${text}`;
+            } else {
+                elem.className = 'criterion invalid';
+                elem.innerHTML = `<i class="fa-solid fa-circle-xmark me-2"></i>${text}`;
+            }
+        }
+
+        function generateSuggestedPassword() {
+            const suggested = "Uat#2026CiberSegura!";
+            document.getElementById('pass-input').value = suggested;
+            checkPasswordRequirements();
+        }
+
+        function validateRoom3() {
+            clearInterval(timerInterval);
+            updateProgress(100);
+
+            // Calculate used time
+            const totalElapsedSeconds = (15 * 60) - timerSeconds;
+            const elapsedMins = Math.floor(totalElapsedSeconds / 60);
+            const elapsedSecs = totalElapsedSeconds % 60;
+            document.getElementById('stat-time-used').textContent = `${elapsedMins.toString().padStart(2, '0')}:${elapsedSecs.toString().padStart(2, '0')}`;
+
+            showScreen('screen-victory');
+        }
+
+        // Game Over Handler
+        function gameOver() {
+            gameStatsHeader.classList.add('d-none');
+            showScreen('screen-gameover');
+        }
+
+        // Reset Game Handler
+        function resetGame() {
+            selectedEmailId = null;
+            selectedVishingId = null;
+            document.getElementById('pass-input').value = '';
+            
+            // Clear choices feedback
+            document.getElementById('btn-validate-room1').disabled = true;
+            document.getElementById('btn-validate-room2').disabled = true;
+            document.getElementById('btn-validate-room3').disabled = true;
+            
+            document.getElementById('room1-feedback').classList.add('d-none');
+            document.getElementById('room2-feedback').classList.add('d-none');
+            document.getElementById('room3-feedback').classList.add('d-none');
+
+            document.querySelectorAll('.email-item').forEach(item => item.classList.remove('selected'));
+            document.querySelectorAll('input[name="vishingOption"]').forEach(r => r.checked = false);
+
+            checkPasswordRequirements();
+
+            showScreen('screen-intro');
+        }
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
